@@ -1,55 +1,22 @@
-import { Injectable } from '@nestjs/common/decorators/core/injectable.decorator';
-import { Inject, Logger } from '@nestjs/common';
-import * as firebaseConfig from '../firebase/firebase.config.json';
-import * as admin from 'firebase-admin';
-
-const firebase_params = {
-  type: firebaseConfig.type,
-  projectId: firebaseConfig.project_id,
-  privateKeyId: firebaseConfig.private_key_id,
-  privateKey: firebaseConfig.private_key,
-  clientEmail: firebaseConfig.client_email,
-  clientId: firebaseConfig.client_id,
-  authUri: firebaseConfig.auth_uri,
-  tokenUri: firebaseConfig.token_uri,
-  authProviderX509CertUrl: firebaseConfig.auth_provider_x509_cert_url,
-  clientC509CertUrl: firebaseConfig.client_x509_cert_url,
+// Import the functions you need from the SDKs you need
+import { initializeApp } from 'firebase/app';
+import { getAnalytics } from 'firebase/analytics';
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+require('dotenv').config();
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: process.env.API_KEY,
+  authDomain: process.env.AUTH_DOMAIN,
+  projectId: process.env.PROJECT_ID,
+  storageBucket: process.env.STORAGE_BUCKET,
+  messagingSenderId: process.env.MESSAGING_SENDER_ID,
+  appId: process.env.APP_ID,
+  measurementId: process.env.MEASUREMENT_ID,
 };
+console.log(firebaseConfig);
 
-@Injectable()
-export class FcmService {
-  constructor() {
-    admin.initializeApp({
-      credential: admin.credential.cert(firebase_params),
-    });
-  }
-  async fcm(token: string, title: string, message: string) {
-    const payload = {
-      token: token,
-      notification: {
-        title: title,
-        body: message,
-      },
-      data: {
-        body: message,
-      },
-    };
-    console.log(payload);
-    const result = await admin
-      .messaging()
-      .send(payload)
-      .then((response) => {
-        // Response is a message ID string.
-        // console.log('Successfully sent message:', response);
-        // return true;
-        return { sent_message: response };
-      })
-      .catch((error) => {
-        // console.log('error');
-        // console.log(error.code);
-        // return false;
-        return { error: error.code };
-      });
-    return result;
-  }
-}
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);

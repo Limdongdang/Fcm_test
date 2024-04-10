@@ -1,13 +1,9 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
-import { FcmService } from './fcm.service';
 
 @Controller()
 export class AppController {
-  constructor(
-    private readonly appService: AppService,
-    private readonly fcmService: FcmService,
-  ) {}
+  constructor(private readonly appService: AppService) {}
 
   @Get()
   getHello(): string {
@@ -21,8 +17,6 @@ export class AppController {
     const message = '알림 메시지';
 
     // FcmService의 fcm 메서드를 호출하여 FCM 메시지를 보냅니다.
-    const result = await this.fcmService.fcm(token, title, message);
-
-    return result;
+    return;
   }
 }
